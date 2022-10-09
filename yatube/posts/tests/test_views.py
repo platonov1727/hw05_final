@@ -1,12 +1,12 @@
 import datetime as dt
 
+from posts.models import Post, Group, Comment, Follow
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
-
-from posts.models import Post, Group, Comment, Follow
 
 User = get_user_model()
 
@@ -124,7 +124,6 @@ class PostViewsTest(TestCase):
         self.assertEqual(profile_username.username, self.user.username)
         self.assertEqual(profile_post_count, 1)
 
-
     def test_context_for_post_detail_is_correct(self):
         """Шаблон post_detail сформирован с правильным контекстом"""
         response = self.authorized_client.get(
@@ -205,7 +204,6 @@ class PostViewsTest(TestCase):
         count_posts = Post.objects.count()
         self.assertEqual(count_posts, 1)
 
-
     def test_follow_another_user(self):
         """Follow на другого пользователя работает корректно"""
         self.authorized_client.get(reverse("posts:profile_follow",
@@ -213,6 +211,7 @@ class PostViewsTest(TestCase):
         follow_exist = Follow.objects.filter(user=self.user,
                                              author=self.user2).exists()
         self.assertEqual(True, follow_exist)
+
     # #
     def test_unfollow_another_user(self):
         """Unfollow от другого пользователя работает корректно"""
@@ -224,11 +223,12 @@ class PostViewsTest(TestCase):
                                              author=self.user2).exists()
         self.assertEqual(False, follow_exist)
 
-
     def test_post_follow_index_correct_context(self):
         """Follow index сформирован с правильным контекстом"""
-        self.authorized_client.get(reverse('posts:profile_follow', kwargs={'username': self.user2}))
-        follow_exist = Follow.objects.filter(user=self.user2, author=self.user).exists()
+        self.authorized_client.get(
+            reverse('posts:profile_follow', kwargs={'username': self.user2}))
+        follow_exist = Follow.objects.filter(user=self.user2,
+                                             author=self.user).exists()
         self.assertEqual(True, follow_exist)
 
         test_post = Post.objects.create(
@@ -240,8 +240,10 @@ class PostViewsTest(TestCase):
         first_post = response.context['page_obj'].object_list[0]
         self.assertEqual(first_post.text, expected)
 
-        self.authorized_client.get(reverse('posts:profile_unfollow', kwargs={'username':self.user2}))
-        follow_exist = Follow.objects.filter(user=self.user, author=self.user2).exists()
+        self.authorized_client.get(
+            reverse('posts:profile_unfollow', kwargs={'username': self.user2}))
+        follow_exist = Follow.objects.filter(user=self.user,
+                                             author=self.user2).exists()
         self.assertEqual(False, follow_exist)
 
         response = self.authorized_client.get(reverse('posts:follow_index'))
