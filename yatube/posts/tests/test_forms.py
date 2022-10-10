@@ -108,8 +108,8 @@ class PostFormsTests(TestCase):
         """Тест неавторизованных пользователей"""
         test_urls = {
             HTTPStatus.FOUND: reverse("posts:post_create"),
-            HTTPStatus.FOUND: reverse("posts:post_edit", kwargs={"post_id":
-                                                                     1}),
+            HTTPStatus.FOUND: reverse("posts:post_edit", 
+                                       kwargs={"post_id": 1}),
         }
 
         for status, urls in test_urls.items():
