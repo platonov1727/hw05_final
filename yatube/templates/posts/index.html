@@ -1,18 +1,18 @@
 {% extends 'base.html' %}
-{% load cache %}
+{% comment %} {% load cache %} {% endcomment %}
 {% block content %}
     <main>
         {% include 'posts/includes/switcher.html' %}
         <div class="container py-5">
             <h1>{{ text }}</h1>
-            {% cache 20 index_page %}
+            {% comment %} {% cache 20 index_page %} {% endcomment %}
                 {% for post in page_obj %}
                     {% include 'includes/article.html' %}
                     {% if not forloop.last %}
                         <hr/>
                     {% endif %}
                 {% endfor %}
-            {% endcache %}
+            {% comment %} {% endcache %} {% endcomment %}
             {% include 'posts/includes/paginator.html' %}
         </div>
     </main>

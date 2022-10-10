@@ -6,7 +6,7 @@
     <main>
       <div class="container py-5">        
         <h1>Все посты пользователя {{ author.username  }}</h1>
-        <h3>Всего постов: {{ posts.count }} </h3>
+        <h3>Всего постов: {{ author.posts.count }} </h3>
         <h6>Отслеживают: {{ followers_count }} </h6>
       {% if author.username %}
       <h6>Cледит за: {{ followings_count }} авторами</h6>

@@ -1,13 +1,11 @@
 import datetime as dt
 from http import HTTPStatus
 
-from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from posts.models import Group, Post
-
-User = get_user_model()
+from posts.models import Group, Post, User
 
 
 class PostURLTests(TestCase):
@@ -27,6 +25,7 @@ class PostURLTests(TestCase):
             author=cls.user,
             pub_date=dt.datetime.now(),
         )
+        cache.clear()
 
     def test_urls_exist_at_desired_locations(self):
         """Проверка доступности адресов для всех пользователей"""
@@ -55,8 +54,8 @@ class PostURLTests(TestCase):
     def test_urls_exist_at_desired_locations_authorized_users(self):
         """Проверка страниц доступных авторизованнымользователям"""
         test_codes_urls = {
-            HTTPStatus.OK: '/posts/1/edit/',
-            HTTPStatus.OK: '/create/',
+            HTTPStatus.OK: reverse('posts:post_edit', kwargs={'post_id':self.post.id}),
+            HTTPStatus.OK: reverse('posts:post_create'),
         }
 
         for codes, adresses in test_codes_urls.items():

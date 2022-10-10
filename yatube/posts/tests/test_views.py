@@ -1,19 +1,17 @@
 import datetime as dt
 
-from posts.models import Post, Group, Comment, Follow
-
 from django import forms
-from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.test import Client, TestCase
 from django.urls import reverse
 
-User = get_user_model()
+from ..models import Comment, Follow, Group, Post, User
 
 POST_PER_PAGE = 10
 
 
 class PostViewsTest(TestCase):
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -24,51 +22,43 @@ class PostViewsTest(TestCase):
         cls.authorized_client = Client()
         cls.authorized_client.force_login(cls.user)
 
-        cls.group2 = Group.objects.create(
-            title='Вторая тест группа',
-            description='Второе описание группы',
-            slug='second-test-slug'
-        )
+        cls.group2 = Group.objects.create(title='Вторая тест группа',
+                                          description='Второе описание группы',
+                                          slug='second-test-slug')
 
         cls.group = Group.objects.create(
             title='Тестовая группа',
             description='Описание тестовой группы',
             slug='test-slug',
         )
-        cls.post = Post.objects.create(
-            text='Тестовый текст',
-            pub_date=dt.datetime.now(),
-            author=cls.user,
-            group=cls.group,
-        )
-        cls.comment = Comment.objects.create(
-            post=cls.post,
-            author=cls.user2,
-            text='Отписка'
-        )
-        cls.comment2 = Comment.objects.create(
-            post=cls.post,
-            author=cls.user,
-            text='Лайк'
-        )
-        cls.follow = Follow.objects.create(
-            user=cls.user2,
-            author=cls.user)
+        cls.post = Post.objects.create(text='Тестовый текст',
+                                       pub_date=dt.datetime.now(),
+                                       author=cls.user,
+                                       group=cls.group)
+        cls.comment = Comment.objects.create(post=cls.post,
+                                             author=cls.user2,
+                                             text='Отписка')
+        cls.comment2 = Comment.objects.create(post=cls.post,
+                                              author=cls.user,
+                                              text='Лайк')
+        cls.follow = Follow.objects.create(user=cls.user2, author=cls.user)
+
+    def setUp(self):
+        cache.clear()
 
     def test_pages_uses_correct_templates(self):
         """URL исплоьзует соответствующий шаблон."""
-
         templates_pages_name = {
             reverse('posts:index'): 'posts/index.html',
             reverse('posts:post_create'): 'posts/create.html',
             reverse('posts:post_edit', kwargs={'post_id': 1}):
-                'posts/create.html',
+            'posts/create.html',
             reverse('posts:group_list', kwargs={'slug': self.group.slug}):
-                'posts/group_list.html',
+            'posts/group_list.html',
             reverse('posts:post_detail', kwargs={'post_id': 1}):
-                'posts/post_detail.html',
+            'posts/post_detail.html',
             reverse('posts:profile', kwargs={'username': self.user.username}):
-                'posts/profile.html',
+            'posts/profile.html',
             reverse('posts:follow_index'): 'posts/follow.html'
         }
 
@@ -95,8 +85,7 @@ class PostViewsTest(TestCase):
         index_title = objects['title']
         index_text = objects['text']
         index_post = objects['page_obj'][0].text
-        self.assertEqual(
-            index_title, 'Это главная страница проекта Yatube.')
+        self.assertEqual(index_title, 'Это главная страница проекта Yatube.')
         self.assertEqual(index_text, 'Последние обновления на сайте')
         self.assertEqual(index_post, 'Тестовый текст')
 
@@ -119,10 +108,8 @@ class PostViewsTest(TestCase):
         objects = response.context
         profile_title = objects['title']
         profile_username = objects['author']
-        profile_post_count = objects['posts_count']
         self.assertEqual(profile_title, 'Профайл пользователя')
         self.assertEqual(profile_username.username, self.user.username)
-        self.assertEqual(profile_post_count, 1)
 
     def test_context_for_post_detail_is_correct(self):
         """Шаблон post_detail сформирован с правильным контекстом"""
@@ -167,20 +154,18 @@ class PostViewsTest(TestCase):
         """
         paginator_objects = []
         for i in range(1, 11):
-            posts_for_pagination = Post(
-                author=self.user,
-                text='Тестовый текст ' + str(i),
-                group=self.group
-            )
+            posts_for_pagination = Post(author=self.user,
+                                        text='Тестовый текст ' + str(i),
+                                        group=self.group)
             paginator_objects.append(posts_for_pagination)
         Post.objects.bulk_create(paginator_objects)
         paginator_data = {
-            'index': reverse('posts:index'),
-            'group': reverse(
-                'posts:group_list', kwargs={'slug': self.group.slug}),
-            'profile': reverse(
-                'posts:profile', kwargs={'username': self.user.username}
-            )
+            'index':
+            reverse('posts:index'),
+            'group':
+            reverse('posts:group_list', kwargs={'slug': self.group.slug}),
+            'profile':
+            reverse('posts:profile', kwargs={'username': self.user.username})
         }
         for pagination, page in paginator_data.items():
             with self.subTest(pagination=pagination):
@@ -191,11 +176,9 @@ class PostViewsTest(TestCase):
 
     def test_cache_index(self):
         """Проверка кэширования постов"""
-        test_post = Post.objects.create(
-            text='some text',
-            author=self.user,
-            group=self.group
-        )
+        test_post = Post.objects.create(text='some text',
+                                        author=self.user,
+                                        group=self.group)
         count_posts = Post.objects.count()
         self.authorized_client.get(reverse('posts:index'))
         test_post.delete()
@@ -206,8 +189,8 @@ class PostViewsTest(TestCase):
 
     def test_follow_another_user(self):
         """Follow на другого пользователя работает корректно"""
-        self.authorized_client.get(reverse("posts:profile_follow",
-                                           kwargs={"username": self.user2}))
+        self.authorized_client.get(
+            reverse("posts:profile_follow", kwargs={"username": self.user2}))
         follow_exist = Follow.objects.filter(user=self.user,
                                              author=self.user2).exists()
         self.assertEqual(True, follow_exist)
@@ -215,10 +198,10 @@ class PostViewsTest(TestCase):
     # #
     def test_unfollow_another_user(self):
         """Unfollow от другого пользователя работает корректно"""
-        self.authorized_client.get(reverse("posts:profile_follow",
-                                           kwargs={"username": self.user2}))
-        self.authorized_client.get(reverse("posts:profile_unfollow",
-                                           kwargs={"username": self.user2}))
+        self.authorized_client.get(
+            reverse("posts:profile_follow", kwargs={"username": self.user2}))
+        self.authorized_client.get(
+            reverse("posts:profile_unfollow", kwargs={"username": self.user2}))
         follow_exist = Follow.objects.filter(user=self.user,
                                              author=self.user2).exists()
         self.assertEqual(False, follow_exist)
@@ -231,10 +214,8 @@ class PostViewsTest(TestCase):
                                              author=self.user).exists()
         self.assertEqual(True, follow_exist)
 
-        test_post = Post.objects.create(
-            text='Test text for follow',
-            author=self.user2
-        )
+        test_post = Post.objects.create(text='Test text for follow',
+                                        author=self.user2)
         expected = test_post.text
         response = self.authorized_client.get(reverse('posts:follow_index'))
         first_post = response.context['page_obj'].object_list[0]

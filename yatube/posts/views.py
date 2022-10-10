@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CommentForm, PostForm
 from .models import Group, Post, Follow
+from django.views.decorators.cache import cache_page
 
 User = get_user_model()
 
@@ -16,7 +17,7 @@ def get_page(request, post_list):
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
 
-
+@cache_page(20, key_prefix='index_page')
 def index(request):
     template = 'posts/index.html'
     title = "Это главная страница проекта Yatube."
@@ -42,7 +43,6 @@ def profile(request, username):
     title = 'Профайл пользователя'
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
-    posts_count = posts.count()
     page_obj = get_page(request, posts)
     following = Follow.objects.filter(user__username=request.user,
                                       author=author)
@@ -52,7 +52,6 @@ def profile(request, username):
         'followers_count': followers_count,
         'followings_count': followings_count,
         'page_obj': page_obj,
-        'posts_count': posts_count,
         'author': author,
         'following': following,
         'posts': posts,
@@ -136,7 +135,7 @@ def profile_follow(request, username):
     if (Follow.objects.filter(author=author, user=request.user).exists()
             or request.user == author):
         return redirect('posts:profile', username=username)
-    Follow.objects.create(author=author, user=request.user)
+    Follow.objects.get_or_create(author=author, user=request.user)
 
     return redirect('posts:profile', username=username)
 
