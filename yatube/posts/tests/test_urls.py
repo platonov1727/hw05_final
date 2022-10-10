@@ -31,19 +31,20 @@ class PostURLTests(TestCase):
         """Проверка доступности адресов для всех пользователей"""
         test_codes_urls = {
             HTTPStatus.OK:
-            reverse('posts:index'),
+                reverse('posts:index'),
             HTTPStatus.OK:
-            reverse('posts:group_list', kwargs={'slug': 'test-slug'}),
+                reverse('posts:group_list', kwargs={'slug': 'test-slug'}),
             HTTPStatus.OK:
-            reverse('about:author'),
+                reverse('about:author'),
             HTTPStatus.OK:
-            reverse('about:tech'),
+                reverse('about:tech'),
             HTTPStatus.OK:
-            reverse('posts:profile', kwargs={'username': self.user.username}),
+                reverse('posts:profile',
+                        kwargs={'username': self.user.username}),
             HTTPStatus.OK:
-            reverse('posts:post_detail', kwargs={'post_id': self.post.id}),
+                reverse('posts:post_detail', kwargs={'post_id': self.post.id}),
             HTTPStatus.NOT_FOUND:
-            '/unexisting-page/'
+                '/unexisting-page/'
         }
 
         for codes, adresses in test_codes_urls.items():
@@ -54,7 +55,8 @@ class PostURLTests(TestCase):
     def test_urls_exist_at_desired_locations_authorized_users(self):
         """Проверка страниц доступных авторизованнымользователям"""
         test_codes_urls = {
-            HTTPStatus.OK: reverse('posts:post_edit', kwargs={'post_id':self.post.id}),
+            HTTPStatus.OK: reverse('posts:post_edit',
+                                   kwargs={'post_id': self.post.id}),
             HTTPStatus.OK: reverse('posts:post_create'),
         }
 

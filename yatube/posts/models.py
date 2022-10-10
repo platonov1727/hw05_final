@@ -1,4 +1,3 @@
-from tabnanny import verbose
 from django.contrib.auth import get_user_model
 from django.db import models
 
@@ -31,7 +30,7 @@ class Post(models.Model):
     image = models.ImageField('Картинка', upload_to='posts/', blank=True)
 
     class Meta:
-        ordering = ('-pub_date', )
+        ordering = ('-pub_date',)
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
 
@@ -53,8 +52,8 @@ class Group(models.Model):
         return self.title
 
     class Meta:
-        verbose_name='Группа'
-        verbose_name_plural='Группы'
+        verbose_name = 'Группа'
+        verbose_name_plural = 'Группы'
 
 
 class Comment(models.Model):
@@ -76,9 +75,9 @@ class Comment(models.Model):
         return self.text[:MAX_LENGHT_OF_POST_STR]
 
     class Meta:
-        ordering = ('created', )
+        ordering = ('created',)
         verbose_name = 'комментарий'
-        verbose_name_plural='комментарии'
+        verbose_name_plural = 'комментарии'
 
 
 class Follow(models.Model):
@@ -99,5 +98,5 @@ class Follow(models.Model):
             models.UniqueConstraint(fields=['user', 'author'],
                                     name='unique_follow')
         ]
-        verbose_name='Подписка'
-        verbose_name_plural='Подписки'
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'

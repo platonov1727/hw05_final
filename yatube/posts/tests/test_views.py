@@ -52,13 +52,13 @@ class PostViewsTest(TestCase):
             reverse('posts:index'): 'posts/index.html',
             reverse('posts:post_create'): 'posts/create.html',
             reverse('posts:post_edit', kwargs={'post_id': 1}):
-            'posts/create.html',
+                'posts/create.html',
             reverse('posts:group_list', kwargs={'slug': self.group.slug}):
-            'posts/group_list.html',
+                'posts/group_list.html',
             reverse('posts:post_detail', kwargs={'post_id': 1}):
-            'posts/post_detail.html',
+                'posts/post_detail.html',
             reverse('posts:profile', kwargs={'username': self.user.username}):
-            'posts/profile.html',
+                'posts/profile.html',
             reverse('posts:follow_index'): 'posts/follow.html'
         }
 
@@ -161,11 +161,12 @@ class PostViewsTest(TestCase):
         Post.objects.bulk_create(paginator_objects)
         paginator_data = {
             'index':
-            reverse('posts:index'),
+                reverse('posts:index'),
             'group':
-            reverse('posts:group_list', kwargs={'slug': self.group.slug}),
+                reverse('posts:group_list', kwargs={'slug': self.group.slug}),
             'profile':
-            reverse('posts:profile', kwargs={'username': self.user.username})
+                reverse('posts:profile',
+                        kwargs={'username': self.user.username})
         }
         for pagination, page in paginator_data.items():
             with self.subTest(pagination=pagination):

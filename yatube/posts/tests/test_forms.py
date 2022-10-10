@@ -109,7 +109,7 @@ class PostFormsTests(TestCase):
         test_urls = {
             HTTPStatus.FOUND: reverse("posts:post_create"),
             HTTPStatus.FOUND: reverse("posts:post_edit", kwargs={"post_id":
-                                                                 1}),
+                                                                     1}),
         }
 
         for status, urls in test_urls.items():
