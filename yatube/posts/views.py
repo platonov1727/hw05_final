@@ -10,6 +10,7 @@ from .models import Group, Post, Follow
 User = get_user_model()
 
 POSTS_PER_PAGE = 10
+CACHE_TIME_SEC = 20
 
 
 def get_page(request, post_list):
@@ -18,7 +19,7 @@ def get_page(request, post_list):
     return paginator.get_page(page_number)
 
 
-@cache_page(20, key_prefix='index_page')
+@cache_page(CACHE_TIME_SEC, key_prefix='index_page')
 def index(request):
     template = 'posts/index.html'
     title = "Это главная страница проекта Yatube."
@@ -133,9 +134,6 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    if (Follow.objects.filter(author=author, user=request.user).exists()
-            or request.user == author):
-        return redirect('posts:profile', username=username)
     Follow.objects.get_or_create(author=author, user=request.user)
 
     return redirect('posts:profile', username=username)
