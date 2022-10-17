@@ -1,41 +1,64 @@
 {% extends 'base.html' %}
 {% block title %}
-профайл пользователя {{ user }}
+    профайл пользователя {{ user }}
 {% endblock title %}
 {% block content %}
     <main>
-      <div class="container py-5">        
-        <h1>Все посты пользователя {{ author.username  }}</h1>
-        <h3>Всего постов: {{ author.posts.count }} </h3>
-        <h6>Отслеживают: {{ followers_count }} </h6>
-      {% if author.username %}
-      <h6>Cледит за: {{ followings_count }} авторами</h6>
-      {% endif %}
-      {% if following %}
-    <a
-      class="btn btn-sm btn-outline-danger"
-      href="{% url 'posts:profile_unfollow' author.username %}" role="button"
-    >
-      Отписаться
-    </a>
-  {% else %}
-      <a
-        class="btn btn-sm btn-primary"
-        href="{% url 'posts:profile_follow' author.username %}" role="button"
-      >
-        Подписаться
-      </a>
-   {% endif %}
-        {% for post in page_obj %}
-        {% include 'includes/article.html' %}
-          {% if not forloop.last %}
-           <hr>
-         {% endif %}
-      {% endfor %}
-      
-        {% comment %} <a href=" {% url 'posts:group_list' post.group.slug %} ">все записи группы</a>         {% endcomment %}
 
-        {% include 'posts/includes/paginator.html' %}
-      </div>
+        <div class="container">
+
+            <div class="row">
+
+                <aside class="col-12 col-md-3">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><h1>Все посты
+                            пользователя {{ author.username }}</h1></li>
+                        <li class="list-group-item"><h3>Всего
+                            постов: {{ author.posts.count }} </h3></li>
+                        <li class="list-group-item"><h6>
+                            Отслеживают: {{ followers_count }} </h6></li>
+                        <li class="list-group-item">
+                            {% if author.username %}
+                                <h6>Cледит за: {{ followings_count }}
+                                    авторами</h6>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">{% if following %}
+                            <a
+                                    class="btn btn-sm btn-outline-danger"
+                                    href="{% url 'posts:profile_unfollow' author.username %}"
+                                    role="button"
+                            >
+                                Отписаться
+                            </a>
+                        {% else %}
+                            <a
+                                    class="btn btn-sm btn-primary"
+                                    href="{% url 'posts:profile_follow' author.username %}"
+                                    role="button"
+                            >
+                                Подписаться
+                            </a>
+                        {% endif %}</li>
+                    </ul>
+                </aside>
+            <article class="col-12 col-md-9">
+                    {% for post in page_obj %}
+                {% include 'includes/article.html' %}
+                {% if not forloop.last %}
+                    <hr>
+                {% endif %}
+            {% endfor %}
+
+            {% comment %} <a href=" {% url 'posts:group_list' post.group.slug %} ">все записи группы</a>         {% endcomment %}
+
+            {% include 'posts/includes/paginator.html' %}
+            </article>
+
+            </div>
+
+        </div>
+
+
     </main>
-    {% endblock content %}
+{% endblock content %}

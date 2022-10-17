@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
+from django.views.generic.detail import DetailView
 
 from .forms import CommentForm, PostForm
-from .models import Group, Post, Follow, Comment
+from .models import Group, Post, Follow, Comment, Profile
 
 User = get_user_model()
 
@@ -155,3 +156,16 @@ def comment_delete(request, comment_id):
     if request.user.username == comment.author.username:
         comment.delete()
     return redirect('posts:post_detail', post_id=post_id)
+
+
+class ShowProfileView(DetailView):
+    model = Profile
+    template_name = 'posts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        users = Profile.objects.all()
+        context = super(ShowProfilePageView, self).get_context_data(*args,
+                                                                    **kwargs)
+        page_user = get_object_or_404(Profile, id=self.kwargs['pk'])
+        context['page_user'] = page_user
+        return context
