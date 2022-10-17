@@ -15,17 +15,15 @@ urlpatterns = [
     path('posts/<int:post_id>/', views.post_detail, name='post_detail'),
     path('posts/<int:post_id>/comment/', views.add_comment,
          name='add_comment'),
+    path("comment/<int:comment_id>/",
+         views.comment_delete, name="comment_delete"),
     path('follow/', views.follow_index, name='follow_index'),
-    path(
-        'profile/<str:username>/follow/',
-        views.profile_follow,
-        name='profile_follow'
-    ),
-    path(
-        'profile/<str:username>/unfollow/',
-        views.profile_unfollow,
-        name='profile_unfollow'
-    ),
+    path('profile/<str:username>/follow/',
+         views.profile_follow,
+         name='profile_follow'),
+    path('profile/<str:username>/unfollow/',
+         views.profile_unfollow,
+         name='profile_unfollow'),
 ]
 
 if settings.DEBUG:

@@ -114,7 +114,7 @@ class PostViewsTest(TestCase):
     def test_context_for_post_detail_is_correct(self):
         """Шаблон post_detail сформирован с правильным контекстом"""
         response = self.authorized_client.get(
-            reverse('posts:post_detail', kwargs={'post_id': 1}))
+            reverse('posts:post_detail', kwargs={'post_id': self.post.pk}))
         objects = response.context
         detail_post = objects['post']
         comment = objects['comments'][0]

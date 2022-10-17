@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import CommentForm, PostForm
-from .models import Group, Post, Follow
+from .models import Group, Post, Follow, Comment
 
 User = get_user_model()
 
@@ -147,3 +147,11 @@ def profile_unfollow(request, username):
     if is_follower.exists():
         is_follower.delete()
     return redirect('posts:profile', username=username)
+
+@login_required
+def comment_delete(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    post_id = comment.post_id
+    if request.user.username == comment.author.username:
+        comment.delete()
+    return redirect('posts:post_detail', post_id=post_id)
