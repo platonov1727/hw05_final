@@ -39,8 +39,8 @@
             {% if request.resolver_match.view_name == 'users:logout' %}active{% endif %}
             " href="{% url 'users:logout' %}">Выйти</a>
                         </li>
-                        <li>
-                            Пользователь: {{ user.username }}
+                        <li class="nav-item">
+                            {{ user.username }}
                         </li>
                     {% else %}
                         <li class="nav-item">

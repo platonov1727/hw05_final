@@ -100,12 +100,3 @@ class Follow(models.Model):
         ]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    bio = models.TextField(max_length=400, blank=True,
-                           verbose_name='Биография')
-    image =  models.ImageField(upload_to='img/profile', blank=True, null=True, verbose_name='Аватар')
-
-    def __str__(self):
-        return str(self.user)
