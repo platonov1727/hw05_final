@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 from .forms import CommentForm, PostForm
 from .models import Group, Post, Follow, Comment
@@ -84,6 +85,7 @@ def post_create(request):
         post.author = request.user
         post.save()
         return redirect('posts:profile', username=post.author.username)
+    cache.clear()
     return render(request, 'posts/create.html', {'form': form, 'title': title})
 
 
@@ -148,6 +150,7 @@ def profile_unfollow(request, username):
         is_follower.delete()
     return redirect('posts:profile', username=username)
 
+
 @login_required
 def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, id=comment_id)
@@ -155,3 +158,12 @@ def comment_delete(request, comment_id):
     if request.user.username == comment.author.username:
         comment.delete()
     return redirect('posts:post_detail', post_id=post_id)
+
+
+@login_required
+def post_delete(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.user.username == post.author.username:
+        post.delete()
+    cache.clear()
+    return redirect(request.META['HTTP_REFERER'])
