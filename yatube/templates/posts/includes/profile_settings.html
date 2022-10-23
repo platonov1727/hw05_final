@@ -1,15 +1,14 @@
 {% load thumbnail %}
 <ul class="list-group list-group-flush">
-    <li class="list-group-item"><h1>Все посты
-        пользователя {{ author.username }}</h1></li>
-    <li class="list-group-item"><h3>Всего
-        постов: {{ author.posts.count }} </h3></li>
-    <li class="list-group-item"><h6>
-        Отслеживают: {{ followers_count }} </h6></li>
+    <li class="list-group-item">Все посты
+        пользователя{{ author.username }}</li>
+    <li class="list-group-item">Всего
+        постов:{{ author.posts.count }}</li>
+    <li class="list-group-item">Отслеживают:
+        {{ followers_count }} </li>
     <li class="list-group-item">
-        {% if author.username %}
-            <h6>Подписан на: {{ followings_count }}
-                авторами</h6>
+        {% if author.username %}Подписан на:{{ followings_count }}
+                авторами
         {% endif %}
     </li>
     <li class="list-group-item">{% if following %}

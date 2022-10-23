@@ -7,22 +7,26 @@
         </li>
         <li>Дата публикации: {{ post.pub_date|date:"d E Y" }}</li>
     </ul>
-    {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+    {% thumbnail post.image "960x360" crop="center" upscale=True as im %}
         <img class="card-img my-2" src="{{ im.url }}">
     {% endthumbnail %}
+    <h3>{{ post.theme }}</h3>
     <p>{{ post.text|linebreaksbr }}</p>
-    <p><a href="{% url 'posts:post_detail' post.id %}">подробная информация
+    <p><a class="links" href="{% url 'posts:post_detail' post.id %}">Подробнее |
+
+        <a class="links" href="{% url 'posts:post_detail' post.id %}">Комментарии<i class="fa-light fa-comments"></i>{{ post.comments.count }}|</a>
+
+    </a>
+
+    {% if post.group %}
+        <a class="links" href="{% url 'posts:group_list' post.group.slug %}">все записи
+            группы: {{ post.group.title }}</a>
+    {% endif %}
 
         {% if post.author.username == user.username %}
                     <a href="{% url 'posts:post_delete' post.id %}"
-                       class="btn-sm links"
+                       class="btn-sm links align-right"
                        role="button">Удалить</a>
                 {% endif %}
-
-    </a>
-    </p>
-    {% if post.group %}
-        <a href="{% url 'posts:group_list' post.group.slug %}">все записи
-            группы</a>
-    {% endif %}
+</p>
 </article>

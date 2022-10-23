@@ -9,6 +9,11 @@ MAX_LENGHT_OF_POST_STR = 15
 class Post(models.Model):
     text = models.TextField(verbose_name='Текст поста',
                             help_text='Введите текст поста')
+    theme = models.CharField(max_length=50,
+                             help_text='Тема поста',
+                             verbose_name='Тема поста',
+                             blank=True,
+                             default='')
     pub_date = models.DateTimeField(auto_now_add=True,
                                     verbose_name='Дата публикации',
                                     help_text='Дата публикации поста',
